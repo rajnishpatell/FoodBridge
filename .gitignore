@@ -18,6 +18,8 @@ build/
 # Environment files (IMPORTANT)
 .env
 .env.*
+logs/
+backend/logs/
 *.local
 
 # Coverage
