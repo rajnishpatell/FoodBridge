@@ -21,6 +21,18 @@ router.post(
   validate,
   registerUser,
 );
-router.post("/login", loginUser);
+router.post(
+  "/login",
+
+  [
+    body("email").isEmail().withMessage("Invalid email"),
+
+    body("password").notEmpty().withMessage("Password required"),
+  ],
+
+  validate,
+
+  loginUser,
+);
 
 export default router;
