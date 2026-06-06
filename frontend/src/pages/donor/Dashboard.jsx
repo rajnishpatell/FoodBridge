@@ -79,7 +79,7 @@ function DonorDashboard() {
         </div>
 
         {/* ⚡ QUICK ACTIONS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <ActionCard
             icon={<FaPlus />}
             title="Create Listing"
@@ -94,12 +94,12 @@ function DonorDashboard() {
             link="/donor/listings"
           />
 
-          <ActionCard
+          {/* <ActionCard
             icon={<FaChartLine />}
             title="Analytics"
             desc="View your impact"
             link="/analytics"
-          />
+          /> */}
         </div>
 
         {/* 🔥 RECENT ACTIVITY */}
