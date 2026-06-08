@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import { calculateRiskScore } from "../utils/aiScoring.js";
 import logger from "../utils/logger.js";
 import cloudinary from "../config/cloudinary.js";
+import axios from "axios";
 
 // Create Food Listing
 export const createFood = async (req, res) => {
@@ -13,7 +14,6 @@ export const createFood = async (req, res) => {
       quantity,
       foodType,
       preparedAt,
-      temperature,
       latitude,
       longitude,
     } = req.body;
@@ -24,6 +24,20 @@ export const createFood = async (req, res) => {
         .status(403)
         .json({ message: "Only donors can create food listings" });
     }
+
+    // Fetch current temperature using Open-Meteo
+    const weatherResponse = await axios.get(
+      `https://api.open-meteo.com/v1/forecast`,
+      {
+        params: {
+          latitude,
+          longitude,
+          current: "temperature_2m",
+        },
+      },
+    );
+
+    const temperature = weatherResponse.data?.current?.temperature_2m ?? 25;
 
     // Calculate AI Risk Score
     const riskScore = calculateRiskScore(foodType, preparedAt, temperature);
@@ -172,14 +186,14 @@ export const claimFood = async (req, res) => {
 
     // AFTER food is updated
 
+    if (!food) {
+      return res.status(400).json({ message: "Food already claimed" });
+    }
+
     global.io.emit("foodClaimed", {
       foodId: food._id,
       status: "CLAIMED",
     });
-
-    if (!food) {
-      return res.status(400).json({ message: "Food already claimed" });
-    }
 
     logger.info(`Food ${foodId} claimed by NGO ${req.user._id}`);
 
@@ -285,11 +299,9 @@ export const deleteFood = async (req, res) => {
   }
 };
 
-
 // Get Claimed Food (NGO)
 export const getClaimedFood = async (req, res) => {
   try {
-
     // Only NGO allowed
     if (req.user.role !== "NGO") {
       return res.status(403).json({
@@ -304,14 +316,11 @@ export const getClaimedFood = async (req, res) => {
       .sort({ createdAt: -1 });
 
     res.json(foods);
-
   } catch (error) {
-
     logger.error(error.message);
 
     res.status(500).json({
       message: error.message,
     });
-
   }
 };
