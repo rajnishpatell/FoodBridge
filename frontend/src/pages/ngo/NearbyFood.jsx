@@ -13,7 +13,6 @@ function NearbyFood() {
   const [filteredFoods, setFilteredFoods] = useState([]);
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedFood, setSelectedFood] = useState(null);
 
   /* 🔍 Filters */
   const [search, setSearch] = useState("");
@@ -32,7 +31,7 @@ function NearbyFood() {
           lng: pos.coords.longitude,
         });
       },
-      () => toast.error("Location required")
+      () => toast.error("Location required"),
     );
   }, []);
 
@@ -40,7 +39,7 @@ function NearbyFood() {
   const fetchFood = async (lat, lng) => {
     try {
       const res = await API.get(
-        `/food/nearby?latitude=${lat}&longitude=${lng}`
+        `/food/nearby?latitude=${lat}&longitude=${lng}`,
       );
       setFoods(res.data.results);
     } catch {
@@ -69,14 +68,12 @@ function NearbyFood() {
     // 🔍 Search
     if (search) {
       temp = temp.filter((f) =>
-        f.title.toLowerCase().includes(search.toLowerCase())
+        f.title.toLowerCase().includes(search.toLowerCase()),
       );
     }
 
     // 📍 Distance filter
-    temp = temp.filter(
-      (f) => parseFloat(f.distanceKm) <= maxDistance
-    );
+    temp = temp.filter((f) => parseFloat(f.distanceKm) <= maxDistance);
 
     // 🍲 Food type
     if (foodType !== "ALL") {
@@ -87,12 +84,10 @@ function NearbyFood() {
     if (aiMode) {
       temp.sort((a, b) => {
         const scoreA =
-          0.6 * (1 - a.riskScore) +
-          0.4 * (1 / (parseFloat(a.distanceKm) + 1));
+          0.6 * (1 - a.riskScore) + 0.4 * (1 / (parseFloat(a.distanceKm) + 1));
 
         const scoreB =
-          0.6 * (1 - b.riskScore) +
-          0.4 * (1 / (parseFloat(b.distanceKm) + 1));
+          0.6 * (1 - b.riskScore) + 0.4 * (1 / (parseFloat(b.distanceKm) + 1));
 
         return scoreB - scoreA;
       });
@@ -118,12 +113,10 @@ function NearbyFood() {
   return (
     <Layout>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-8">
-
         <h1 className="text-3xl font-bold">Nearby Food</h1>
 
         {/* 🔥 FILTER PANEL */}
         <div className="bg-white p-5 rounded-2xl shadow flex flex-col md:flex-row gap-4 items-center">
-
           {/* Search */}
           <div className="flex items-center gap-2 border px-3 py-2 rounded-lg w-full md:w-1/3">
             <FaSearch className="text-gray-400" />
@@ -182,7 +175,6 @@ function NearbyFood() {
               🧠 AI Smart
             </button>
           </div>
-
         </div>
 
         {/* 🗺️ MAP */}
@@ -209,12 +201,9 @@ function NearbyFood() {
                   onClaim={claimFood}
                   isNearest={!aiMode && index === 0}
                   aiMode={aiMode}
-                  isSelected={selectedFood === food._id}
-                  onHover={() => setSelectedFood(food._id)}
                 />
               ))}
         </div>
-
       </div>
     </Layout>
   );
