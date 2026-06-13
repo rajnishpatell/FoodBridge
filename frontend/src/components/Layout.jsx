@@ -24,7 +24,7 @@ function Layout({ children }) {
         </div>
 
         {/* ✅ MOBILE TOPBAR */}
-        <MobileTopbar onMenuClick={() => setSidebarOpen(true)} />
+        <MobileTopbar onMenuClick={() => setSidebarOpen(prev => !prev)} />
 
         {/* ✅ CONTENT */}
         <div className="p-4 md:p-8 mt-14 md:mt-0">
